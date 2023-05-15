@@ -1,20 +1,31 @@
-import java.util.*;
 import java.net.*;
+import java.io.*;
 
 public class UDPClient {
-    static String serverName = "hostname";
-    static int serverPort = 12000;
+    static final String serverName = "hostname";
+    static final int serverPort = 12000;
+    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    static byte[] sendData = new byte[1024];
+    static byte[] receiveData = new byte[1024];
 
     public static void main(String[] args) throws Exception {
 
         DatagramSocket clientSocket = new DatagramSocket();
-        InetAddress IPAddress = InetAddress.getByName(serverName);
-
-        Scanner scan = new Scanner(System.in);
+        InetAddress IPAddress = InetAddress.getByName(serverName); // 4KiB
+        
         System.out.print("Input lowercase sentence: ");
-        String message = scan.next();
-        System.out.println(message);
+        String sentence = reader.readLine();
+        sendData = sentence.getBytes();
 
-        scan.close();
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, serverPort);
+        clientSocket.send(sendPacket);
+
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+        clientSocket.receive(receivePacket);
+
+        String modifiedSentence = new String(receivePacket.getData());
+        System.out.println("FROM SERVER: " + modifiedSentence);
+
+        clientSocket.close();
     }
 }
