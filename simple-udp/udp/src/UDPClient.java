@@ -1,7 +1,7 @@
 import java.net.*;
 
 public class UDPClient {
-    static final String serverName = "hostname";
+    static final String serverName = "localhost";
     static final int serverPort = 12000;
     private DatagramSocket clientSocket;
     private byte[] sendData = new byte[1024];
